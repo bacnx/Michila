@@ -1,10 +1,10 @@
 # No whitespace after the comma or in your part name!
-config SHIELD_SWEEP_LEFT
-    def_bool $(shields_list_contains,SWEEP_left)
+config SHIELD_Sweep_LEFT
+    def_bool $(shields_list_contains,Sweep_left)
 
 # No whitespace after the comma or in your part name!
-config SHIELD_SWEEP_RIGHT
-    def_bool $(shields_list_contains,SWEEP_right)
+config SHIELD_Sweep_RIGHT
+    def_bool $(shields_list_contains,Sweep_right)
 
 
 CONFIG_ZMK_SOFT_OFF=y

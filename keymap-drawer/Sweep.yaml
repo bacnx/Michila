@@ -31,10 +31,10 @@ layers:
   - {t: ',', s: <}
   - {t: ., s: '>'}
   - {t: /, s: '?'}
-  - $$mdi:keyboard-space$$
   - {t: '$$mdi:backspace$$', h: Num/Sym}
-  - {t: '$$mdi:keyboard-tab$$', h: Nav}
+  - $$mdi:keyboard-space$$
   - {t: '$$mdi:keyboard-return$$', type: enter}
+  - {t: '$$mdi:keyboard-tab$$', h: Nav}
   Num/Sym:
   - '!'
   - '@'
@@ -66,10 +66,10 @@ layers:
   - {t: ;, s: ':'}
   - _
   - '|'
-  - $$mdi:keyboard-space$$
   - {type: held}
-  - {t: Mouse, h: toggle}
+  - $$mdi:keyboard-space$$
   - {t: '$$mdi:keyboard-return$$', type: enter}
+  - {t: Mouse, h: toggle}
   Nav:
   - $$mdi:keyboard-esc$$
   - INS
@@ -101,10 +101,10 @@ layers:
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
-  - $$mdi:keyboard-space$$
   - {t: Mouse, h: toggle}
-  - {type: held}
+  - $$mdi:keyboard-space$$
   - {t: '$$mdi:keyboard-return$$', type: enter}
+  - {type: held}
   Media:
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}

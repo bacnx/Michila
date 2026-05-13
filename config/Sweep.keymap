@@ -13,14 +13,36 @@
 #include <dt-bindings/zmk/pointing.h>
 
 #define ZMK_POINTING_DEFAULT_MOVE_VAL 1200
-#define ZMK_POINTING_DEFAULT_SCRL_VAL 900
+#define ZMK_POINTING_DEFAULT_SCRL_VAL 60
 
-&mmv_input_listener { input-processors = <&zip_xy_scaler 2 1>; };
-&msc_input_listener { input-processors = <&zip_scroll_scaler 2 1>; };
+// Normal mouse speed on layer 4 only (layers 5/6 get their own listeners)
+&mmv_input_listener {
+    input-processors = <&zip_xy_scaler 2 1>;
+    layers = <4>;
+};
+
+// Slow speed on layer 5 (hold A in mouse layer)
+/ {
+    mmv_slow_listener: mmv_slow_listener {
+        compatible = "zmk,input-listener";
+        device = <&mmv>;
+        input-processors = <&zip_xy_scaler 1 2>;
+        layers = <5>;
+    };
+
+    mmv_fast_listener: mmv_fast_listener {
+        compatible = "zmk,input-listener";
+        device = <&mmv>;
+        input-processors = <&zip_xy_scaler 5 1>;
+        layers = <6>;
+    };
+};
+
+&msc_input_listener { input-processors = <&zip_scroll_scaler 1 1>; };
 
 &msc {
-    acceleration-exponent = <1>;
-    time-to-max-speed-ms = <100>;
+    acceleration-exponent = <0>;
+    time-to-max-speed-ms = <300>;
     delay-ms = <0>;
 };
 
@@ -53,30 +75,6 @@
             quick-tap-ms = <175>;
             require-prior-idle-ms = <150>;
             bindings = <&kp>, <&kp>;
-        };
-
-        // Precision mouse: slow ramp, linear, lower event rate
-        mmv_slow: mmv_slow {
-            compatible = "zmk,behavior-input-two-axis";
-            label = "MMV_SLOW";
-            #binding-cells = <1>;
-            x-input-code = <INPUT_REL_X>;
-            y-input-code = <INPUT_REL_Y>;
-            time-to-max-speed-ms = <2000>;
-            acceleration-exponent = <0>;
-            trigger-period-ms = <32>;
-        };
-
-        // Fast mouse: quick ramp, exponential, high event rate
-        mmv_fast: mmv_fast {
-            compatible = "zmk,behavior-input-two-axis";
-            label = "MMV_FAST";
-            #binding-cells = <1>;
-            x-input-code = <INPUT_REL_X>;
-            y-input-code = <INPUT_REL_Y>;
-            time-to-max-speed-ms = <100>;
-            acceleration-exponent = <2>;
-            trigger-period-ms = <8>;
         };
 
         Scroll_D_U: Scroll_D_U {
@@ -224,7 +222,7 @@
             display-name = "Slow";
             bindings = <
 &trans  &trans  &trans  &trans  &trans    &trans  &trans                  &trans                  &trans                  &trans
-&trans  &trans  &trans  &trans  &trans    &trans  &mmv_slow MOVE_LEFT     &mmv_slow MOVE_DOWN     &mmv_slow MOVE_UP       &mmv_slow MOVE_RIGHT
+&trans  &trans  &trans  &trans  &trans    &trans  &mmv MOVE_LEFT          &mmv MOVE_DOWN          &mmv MOVE_UP            &mmv MOVE_RIGHT
 &trans  &trans  &trans  &trans  &trans    &trans  &trans                  &trans                  &trans                  &trans
                          &trans  &trans   &trans  &trans
             >;
@@ -237,7 +235,7 @@
             display-name = "Fast";
             bindings = <
 &trans  &trans  &trans  &trans  &trans    &trans  &trans                  &trans                  &trans                  &trans
-&trans  &trans  &trans  &trans  &trans    &trans  &mmv_fast MOVE_LEFT     &mmv_fast MOVE_DOWN     &mmv_fast MOVE_UP       &mmv_fast MOVE_RIGHT
+&trans  &trans  &trans  &trans  &trans    &trans  &mmv MOVE_LEFT          &mmv MOVE_DOWN          &mmv MOVE_UP            &mmv MOVE_RIGHT
 &trans  &trans  &trans  &trans  &trans    &trans  &trans                  &trans                  &trans                  &trans
                          &trans  &trans   &trans  &trans
             >;

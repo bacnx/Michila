@@ -12,32 +12,12 @@
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/pointing.h>
 
+#undef ZMK_POINTING_DEFAULT_MOVE_VAL
 #define ZMK_POINTING_DEFAULT_MOVE_VAL 1200
+#undef ZMK_POINTING_DEFAULT_SCRL_VAL
 #define ZMK_POINTING_DEFAULT_SCRL_VAL 60
 
-// Normal mouse speed on layer 4 only (layers 5/6 get their own listeners)
-&mmv_input_listener {
-    input-processors = <&zip_xy_scaler 2 1>;
-    layers = <4>;
-};
-
-// Slow speed on layer 5 (hold A in mouse layer)
-/ {
-    mmv_slow_listener: mmv_slow_listener {
-        compatible = "zmk,input-listener";
-        device = <&mmv>;
-        input-processors = <&zip_xy_scaler 1 2>;
-        layers = <5>;
-    };
-
-    mmv_fast_listener: mmv_fast_listener {
-        compatible = "zmk,input-listener";
-        device = <&mmv>;
-        input-processors = <&zip_xy_scaler 5 1>;
-        layers = <6>;
-    };
-};
-
+&mmv_input_listener { input-processors = <&zip_xy_scaler 2 1>; };
 &msc_input_listener { input-processors = <&zip_scroll_scaler 1 1>; };
 
 &msc {
@@ -68,7 +48,6 @@
         // Balanced hold-tap with prior-idle to prevent false mod triggers while typing
         hm: homerow_mods {
             compatible = "zmk,behavior-hold-tap";
-            label = "HOMEROW_MODS";
             #binding-cells = <2>;
             flavor = "balanced";
             tapping-term-ms = <280>;
@@ -79,7 +58,6 @@
 
         Scroll_D_U: Scroll_D_U {
             compatible = "zmk,behavior-sensor-rotate";
-            label = "SCROLL_D_U";
             #sensor-binding-cells = <0>;
             bindings = <&msc SCRL_DOWN>, <&msc SCRL_UP>;
             tap-ms = <20>;
@@ -87,7 +65,6 @@
 
         Scroll_U_D: Scroll_U_D {
             compatible = "zmk,behavior-sensor-rotate";
-            label = "SCROLL_U_D";
             #sensor-binding-cells = <0>;
             bindings = <&msc SCRL_UP>, <&msc SCRL_DOWN>;
             tap-ms = <20>;
@@ -95,7 +72,6 @@
 
         Scroll_LR: Scroll_LR {
             compatible = "zmk,behavior-sensor-rotate";
-            label = "SCROLL_LR";
             #sensor-binding-cells = <0>;
             bindings = <&msc SCRL_LEFT>, <&msc SCRL_RIGHT>;
             tap-ms = <20>;
@@ -103,7 +79,6 @@
 
         Scroll_RL: Scroll_RL {
             compatible = "zmk,behavior-sensor-rotate";
-            label = "SCROLL_RL";
             #sensor-binding-cells = <0>;
             bindings = <&msc SCRL_RIGHT>, <&msc SCRL_LEFT>;
             tap-ms = <20>;
@@ -111,14 +86,12 @@
 
         mouse_DU: mouse_DU {
             compatible = "zmk,behavior-sensor-rotate";
-            label = "MOUSE_DU";
             #sensor-binding-cells = <0>;
             bindings = <&mmv MOVE_DOWN>, <&mmv MOVE_UP>;
         };
 
         mouse_RL: mouse_RL {
             compatible = "zmk,behavior-sensor-rotate";
-            label = "MOUSE_RL";
             #sensor-binding-cells = <0>;
             bindings = <&mmv MOVE_RIGHT>, <&mmv MOVE_LEFT>;
         };

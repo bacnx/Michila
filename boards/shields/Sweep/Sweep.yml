@@ -12,7 +12,6 @@ features:
   - keys
   - studio
   - pointer
-  - encoder
 siblings:
   - Sweep_left
   - Sweep_right

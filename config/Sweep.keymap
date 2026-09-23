@@ -32,10 +32,6 @@
     trigger-period-ms = <16>;
 };
 
-&soft_off {
-    hold-time-ms = <3000>;
-};
-
 &mt {
     tapping-term-ms = <300>;
     flavor = "tap-preferred";

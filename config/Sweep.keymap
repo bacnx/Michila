@@ -4,24 +4,81 @@
  * SPDX-License-Identifier: MIT
  */
 
+// Base mouse values — must be defined before pointing.h is included
+#define ZMK_POINTING_DEFAULT_MOVE_VAL 1200   // default: 600
+#define ZMK_POINTING_DEFAULT_SCRL_VAL 60     // default: 10
+
 #include <input/processors.dtsi>
 #include <zephyr/dt-bindings/input/input-event-codes.h>
-#include <dt-bindings/zmk/mouse.h>
-#include <behaviors/mouse_keys.dtsi>
+#include <dt-bindings/zmk/pointing.h>
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
-#include <dt-bindings/zmk/pointing.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/outputs.h>
 
-#undef ZMK_POINTING_DEFAULT_MOVE_VAL
-#define ZMK_POINTING_DEFAULT_MOVE_VAL 1200
-#undef ZMK_POINTING_DEFAULT_SCRL_VAL
-#define ZMK_POINTING_DEFAULT_SCRL_VAL 60
+// ─── Key positions ──────────────────────────────────────────────────
+//  0  1  2  3  4       5  6  7  8  9
+// 10 11 12 13 14      15 16 17 18 19
+// 20 21 22 23 24      25 26 27 28 29
+//          30 31      32 33
+#define KEYS_L 0 1 2 3 4 10 11 12 13 14 20 21 22 23 24
+#define KEYS_R 5 6 7 8 9 15 16 17 18 19 25 26 27 28 29
+#define THUMBS 30 31 32 33
 
-&mmv_input_listener { input-processors = <&zip_xy_scaler 2 1>; };
-&msc_input_listener { input-processors = <&zip_scroll_scaler 1 1>; };
+// ─── Layers ─────────────────────────────────────────────────────────
+#define BASE  0
+#define SYM   1
+#define NAV   2
+#define MEDIA 3
+#define MOUSE 4
+#define SLOW  5
+#define FAST  6
 
+// ─── Mouse speed (multiplier = num den → MOVE_VAL * num / den) ──────
+// X = horizontal, Y = vertical. Tune each independently.
+#define MMV_X_NORMAL 2 1   // 2400
+#define MMV_Y_NORMAL 3 2   // 1800
+#define MMV_X_SLOW   1 3   //  400
+#define MMV_Y_SLOW   1 4   //  300
+#define MMV_X_FAST   4 1   // 4800
+#define MMV_Y_FAST   3 1   // 3600
+
+// Scroll speed (both wheel axes)
+#define SCRL_NORMAL  1 1
+#define SCRL_SLOW    1 3
+#define SCRL_FAST    2 1
+
+&mmv_input_listener {
+    input-processors = <&zip_x_scaler MMV_X_NORMAL>, <&zip_y_scaler MMV_Y_NORMAL>;
+
+    slow {
+        layers = <SLOW>;
+        input-processors = <&zip_x_scaler MMV_X_SLOW>, <&zip_y_scaler MMV_Y_SLOW>;
+    };
+
+    fast {
+        layers = <FAST>;
+        input-processors = <&zip_x_scaler MMV_X_FAST>, <&zip_y_scaler MMV_Y_FAST>;
+    };
+};
+
+&msc_input_listener {
+    input-processors = <&zip_scroll_scaler SCRL_NORMAL>;
+
+    slow {
+        layers = <SLOW>;
+        input-processors = <&zip_scroll_scaler SCRL_SLOW>;
+    };
+
+    fast {
+        layers = <FAST>;
+        input-processors = <&zip_scroll_scaler SCRL_FAST>;
+    };
+};
+
+// Short tap scrolls a little, holding ramps up to full speed
 &msc {
-    acceleration-exponent = <0>;
+    acceleration-exponent = <1>;
     time-to-max-speed-ms = <300>;
     delay-ms = <0>;
 };
@@ -32,17 +89,19 @@
     trigger-period-ms = <16>;
 };
 
-&mt {
-    tapping-term-ms = <300>;
-    flavor = "tap-preferred";
+// Thumb layer-taps: quick-tap lets tap-then-hold repeat BSPC/TAB
+&lt {
+    flavor = "balanced";
+    tapping-term-ms = <200>;
+    quick-tap-ms = <175>;
 };
-
-&lt { tapping-term-ms = <300>; };
 
 / {
     behaviors {
-        // Balanced hold-tap with prior-idle to prevent false mod triggers while typing
-        hm: homerow_mods {
+        // Home row mods (positional): a mod only triggers when the next key is
+        // on the opposite hand or a thumb. Same-hand keys are decided on release,
+        // so holding several mods on one side (e.g. Ctrl+Shift) still works.
+        hml: homerow_mods_left {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
             flavor = "balanced";
@@ -50,24 +109,52 @@
             quick-tap-ms = <175>;
             require-prior-idle-ms = <150>;
             bindings = <&kp>, <&kp>;
+            hold-trigger-key-positions = <KEYS_R THUMBS>;
+            hold-trigger-on-release;
+        };
+
+        hmr: homerow_mods_right {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <280>;
+            quick-tap-ms = <175>;
+            require-prior-idle-ms = <150>;
+            bindings = <&kp>, <&kp>;
+            hold-trigger-key-positions = <KEYS_L THUMBS>;
+            hold-trigger-on-release;
+        };
+    };
+
+    // Hold both outer thumbs (Sym + Nav) → Media
+    conditional_layers {
+        compatible = "zmk,conditional-layers";
+
+        tri_layer {
+            if-layers = <SYM NAV>;
+            then-layer = <MEDIA>;
         };
     };
 
     combos {
         compatible = "zmk,combos";
 
-        // Both inner thumbs together → toggle media layer
-        combo_media {
-            bindings = <&tog 3>;
+        // Tap both inner thumbs (Space + Enter) → toggle mouse layer
+        combo_mouse {
+            bindings = <&tog MOUSE>;
             key-positions = <31 32>;
-            timeout-ms = <50>;
+            timeout-ms = <60>;
+            require-prior-idle-ms = <150>;
+            layers = <BASE MOUSE>;
         };
 
-        // N+E → ESC (positions 16+17, right index+middle home row)
+        // N+E → ESC (right index+middle home row), only on base layer
         combo_esc {
             bindings = <&kp ESC>;
             key-positions = <16 17>;
             timeout-ms = <50>;
+            require-prior-idle-ms = <150>;
+            layers = <BASE>;
         };
     };
 
@@ -80,87 +167,89 @@
             display-name = "Colemak-DH";
             bindings = <
 &kp Q         &kp W         &kp F          &kp P          &kp B      &kp J       &kp L          &kp U          &kp Y         &kp SEMI
-&hm LGUI A    &hm LALT R    &hm LCTRL S    &hm LSHFT T    &kp G      &kp M       &hm RSHFT N    &hm RCTRL E    &hm RALT I    &hm RGUI O
+&hml LGUI A   &hml LALT R   &hml LCTRL S   &hml LSHFT T   &kp G      &kp M       &hmr RSHFT N   &hmr RCTRL E   &hmr RALT I   &hmr RGUI O
 &kp Z         &kp X         &kp C          &kp D          &kp V      &kp K       &kp H          &kp COMMA      &kp DOT       &kp FSLH
-                                            &lt 1 BSPC    &kp SPACE  &kp ENTER   &lt 2 TAB
+                                            &lt SYM BSPC  &kp SPACE  &kp ENTER   &lt NAV TAB
             >;
         };
 
         // ─── Layer 1: Numbers & Symbols ─────────────────────────────
-        // Hold L-outer (BSPC key). R-outer → to 4 (mouse)
+        // Hold L-outer (BSPC key). + R-outer → Media
         lower_layer {
             display-name = "Num/Sym";
             bindings = <
 &kp EXCL    &kp AT      &kp HASH    &kp DLLR    &kp PRCNT    &kp CARET   &kp AMPS    &kp STAR    &kp LPAR    &kp RPAR
 &kp N1      &kp N2      &kp N3      &kp N4      &kp N5       &kp N6      &kp N7      &kp N8      &kp N9      &kp N0
 &kp GRAVE   &kp MINUS   &kp EQUAL   &kp LBKT    &kp RBKT     &kp BSLH    &kp SQT     &kp SEMI    &kp UNDER   &kp PIPE
-                                     &trans      &kp SPACE    &kp ENTER   &to 4
+                                     &trans      &kp SPACE    &kp ENTER   &trans
             >;
         };
 
         // ─── Layer 2: Navigation ────────────────────────────────────
         // Hold R-outer (TAB key). N/E/I/O = LEFT/DOWN/UP/RIGHT
-        // L-outer → to 4 (mouse)
+        // + L-outer → Media
         raise_layer {
             display-name = "Nav";
             bindings = <
 &kp ESC     &kp INS     &trans      &kp PSCRN   &trans       &trans      &kp PGUP    &kp DEL     &trans      &trans
 &kp CAPS    &trans      &trans      &trans      &trans       &kp HOME    &kp LEFT    &kp DOWN    &kp UP      &kp RIGHT
 &trans      &kp LC(Z)   &kp LC(X)   &kp LC(C)   &kp LC(V)    &kp END     &kp PGDN    &trans      &trans      &trans
-                                     &to 4       &kp SPACE    &kp ENTER   &trans
+                                     &trans      &kp SPACE    &kp ENTER   &trans
             >;
         };
 
-        // ─── Layer 3: Media & Brightness ────────────────────────────
-        // Toggled by combo (both inner thumbs). Exit via R-outer.
+        // ─── Layer 3: Media / Bluetooth / System ────────────────────
+        // Hold both outer thumbs (Sym + Nav).
+        // Bootloader is per-half: left one flashes left, right one flashes right.
         media_layer {
             display-name = "Media";
             bindings = <
-&trans          &trans          &trans          &trans          &trans    &trans  &trans  &trans  &trans  &trans
-&kp C_MUTE      &kp C_VOL_DN    &kp C_VOL_UP    &kp C_BRI_DN    &kp C_BRI_UP    &trans  &trans  &trans  &trans  &trans
-&kp C_PREV      &kp C_PP        &kp C_NEXT      &trans          &trans    &trans  &trans  &trans  &trans  &trans
-                                                 &trans          &trans    &trans  &to 0
+&kp F1          &kp F2          &kp F3          &kp F4          &kp F5             &kp F6          &kp F7          &kp F8          &kp F9          &kp F10
+&kp C_MUTE      &kp C_VOL_DN    &kp C_VOL_UP    &kp C_BRI_DN    &kp C_BRI_UP       &bt BT_SEL 0    &bt BT_SEL 1    &bt BT_SEL 2    &bt BT_SEL 3    &bt BT_SEL 4
+&kp C_PREV      &kp C_PP        &kp C_NEXT      &trans          &bootloader        &bt BT_CLR      &out OUT_TOG    &kp F11         &kp F12         &bootloader
+                                                &trans          &trans             &trans          &trans
             >;
         };
 
         // ─── Layer 4: Mouse ───────────────────────────────────────────
-        // Right hand  — N/E/I/O = MOVE_LEFT/DOWN/UP/RIGHT (normal speed)
-        // Left body   — T=LCLK  G=RCLK  D=MCLK
-        //               A=mo(5) slow    S=mo(6) fast
-        //               R=MB4(back)     V=MB5(fwd)
-        //               Q/W/F/P = scroll left/down/up/right
-        // All thumbs  — to 0 (exit mouse layer)
+        // Toggle: tap both inner thumbs. Exit: tap both inner thumbs, or any thumb.
+        // Right home   — N/E/I/O = move LEFT/DOWN/UP/RIGHT
+        // Right bottom — H/,/./⁄ = scroll LEFT/DOWN/UP/RIGHT (same fingers, one row down)
+        // Left top     — Q/W/F/P = GUI/ALT/CTRL/SHIFT (for ctrl-click, shift-click…)
+        // Left home    — A=hold slow   R=MB4(back)   S=hold fast   T=LCLK   G=RCLK
+        // Left bottom  — D=MCLK        V=MB5(fwd)
         mouse_layer {
             display-name = "Mouse";
             bindings = <
-&msc SCRL_LEFT  &msc SCRL_DOWN  &msc SCRL_UP    &msc SCRL_RIGHT &trans          &trans  &trans           &trans           &trans          &trans
-&mo 5           &mkp MB4        &mo 6           &mkp LCLK       &mkp RCLK       &trans  &mmv MOVE_LEFT   &mmv MOVE_DOWN   &mmv MOVE_UP    &mmv MOVE_RIGHT
-&trans          &trans          &trans          &mkp MCLK       &mkp MB5        &trans  &trans           &trans           &trans          &trans
-                                                &to 0           &to 0           &to 0   &to 0
+&kp LGUI        &kp LALT        &kp LCTRL       &kp LSHFT       &trans          &trans  &trans           &trans           &trans           &trans
+&mo SLOW        &mkp MB4        &mo FAST        &mkp LCLK       &mkp RCLK       &trans  &mmv MOVE_LEFT   &mmv MOVE_DOWN   &mmv MOVE_UP     &mmv MOVE_RIGHT
+&trans          &trans          &trans          &mkp MCLK       &mkp MB5        &trans  &msc SCRL_LEFT   &msc SCRL_DOWN   &msc SCRL_UP     &msc SCRL_RIGHT
+                                                &to BASE        &to BASE        &to BASE  &to BASE
             >;
         };
 
-        // ─── Layer 5: Slow mouse overlay ────────────────────────────
-        // Active while holding A in mouse layer. Only NEIO overridden.
+        // ─── Layer 5: Slow mouse ────────────────────────────────────
+        // Held from mouse layer (A). Speed comes from the input listener
+        // override above, so every key falls through to the mouse layer.
         slow_mouse {
             display-name = "Slow";
             bindings = <
-&trans  &trans  &trans  &trans  &trans    &trans  &trans                  &trans                  &trans                  &trans
-&trans  &trans  &trans  &trans  &trans    &trans  &mmv MOVE_LEFT          &mmv MOVE_DOWN          &mmv MOVE_UP            &mmv MOVE_RIGHT
-&trans  &trans  &trans  &trans  &trans    &trans  &trans                  &trans                  &trans                  &trans
-                         &trans  &trans   &trans  &trans
+&trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+                        &trans  &trans    &trans  &trans
             >;
         };
 
-        // ─── Layer 6: Fast mouse overlay ────────────────────────────
-        // Active while holding S in mouse layer. Only NEIO overridden.
+        // ─── Layer 6: Fast mouse ────────────────────────────────────
+        // Held from mouse layer (S). See Layer 5.
         fast_mouse {
             display-name = "Fast";
             bindings = <
-&trans  &trans  &trans  &trans  &trans    &trans  &trans                  &trans                  &trans                  &trans
-&trans  &trans  &trans  &trans  &trans    &trans  &mmv MOVE_LEFT          &mmv MOVE_DOWN          &mmv MOVE_UP            &mmv MOVE_RIGHT
-&trans  &trans  &trans  &trans  &trans    &trans  &trans                  &trans                  &trans                  &trans
-                         &trans  &trans   &trans  &trans
+&trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+                        &trans  &trans    &trans  &trans
             >;
         };
     };

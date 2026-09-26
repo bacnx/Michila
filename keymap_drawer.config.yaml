@@ -117,80 +117,70 @@ parse_config:
     type: trans
 
   raw_binding_map:
-    # Layers
-    "&ltq 1 BACKSPACE":
-      tap:  $$mdi:backspace$$
-      hold: '$$mdi:navigation-variant$$'
-    "&ltq 3 TAB":
-      tap: $$mdi:keyboard-tab$$
-      hold: $$mdi:numeric$$
-    "&ltq 2 SPACE":
-      tap: $$mdi:keyboard-space$$
+    # Thumb layer-taps
+    "&lt 1 BSPC":
+      tap: $$mdi:backspace$$
       hold: $$mdi:symbol$$
-    "&ltq 3 ENTER":
-      tap: $$mdi:keyboard-return$$
-      hold: $$mdi:numeric$$
-    "&ltq 1 DELETE":
-      tap: $$mdi:backspace-reverse-outline$$
+    "&lt 2 TAB":
+      tap: $$mdi:keyboard-tab$$
       hold: $$mdi:navigation-variant$$
-    # Home rows
-    "&hm LEFT_GUI A":
+    "&to 0":
+      tap: $$mdi:exit-to-app$$
+    # Home row mods
+    "&hml LGUI A":
       tap: 'A'
       shifted: $$mdi:apple-keyboard-command$$
-    "&hm LEFT_ALT S":
+    "&hml LALT R":
+      tap: 'R'
+      shifted: $$mdi:apple-keyboard-option$$
+    "&hml LCTRL S":
       tap: 'S'
-      shifted: $$mdi:apple-keyboard-option$$
-    "&hm LEFT_CONTROL D":
-      tap: 'D'
       shifted: $$mdi:apple-keyboard-control$$
-    "&hm LEFT_SHIFT F":
-      tap: 'F'
+    "&hml LSHFT T":
+      tap: 'T'
       shifted: $$mdi:apple-keyboard-shift$$
-    "&hm RIGHT_SHIFT J":
-      tap: 'J'
+    "&hmr RSHFT N":
+      tap: 'N'
       shifted: $$mdi:apple-keyboard-shift$$
-    "&hm RIGHT_CONTROL K":
-      tap: 'K'
+    "&hmr RCTRL E":
+      tap: 'E'
       shifted: $$mdi:apple-keyboard-control$$
-    "&hm RIGHT_ALT L":
-      tap: 'L'
+    "&hmr RALT I":
+      tap: 'I'
       shifted: $$mdi:apple-keyboard-option$$
-    # self behaviors
-    "&hm LG(LS(V)) P":
-      tap: 'P'
-      shifted: $$mdi:content-copy$$
+    "&hmr RGUI O":
+      tap: 'O'
+      shifted: $$mdi:apple-keyboard-command$$
     # Mouse
+    "&mo 5":
+      tap: $$mdi:speedometer-slow$$
+      hold: slow
+    "&mo 6":
+      tap: $$mdi:speedometer$$
+      hold: fast
     "&msc SCRL_UP":
       tap: $$mdi:pan-up$$
-      hold: ''
-      shifted: ''
+      shifted: $$mdi:mouse-scroll-wheel$$
     "&msc SCRL_DOWN":
       tap: $$mdi:pan-down$$
-      hold: ''
-      shifted: ''
+      shifted: $$mdi:mouse-scroll-wheel$$
     "&msc SCRL_LEFT":
       tap: $$mdi:pan-left$$
-      hold: ''
-      shifted: ''
+      shifted: $$mdi:mouse-scroll-wheel$$
     "&msc SCRL_RIGHT":
       tap: $$mdi:pan-right$$
-      hold: ''
-      shifted: ''
+      shifted: $$mdi:mouse-scroll-wheel$$
     "&mmv MOVE_LEFT":
       tap: $$mdi:menu-left$$
-      hold: ''
       shifted: $$mdi:mouse$$
     "&mmv MOVE_RIGHT":
       tap: $$mdi:menu-right$$
-      hold: ''
       shifted: $$mdi:mouse$$
     "&mmv MOVE_UP":
       tap: $$mdi:menu-up$$
-      hold: ''
       shifted: $$mdi:mouse$$
     "&mmv MOVE_DOWN":
       tap: $$mdi:menu-down$$
-      hold: ''
       shifted: $$mdi:mouse$$
     "&mkp LCLK":
       tap: $$mdi:mouse-left-click-outline$$
@@ -198,61 +188,37 @@ parse_config:
       tap: $$mdi:mouse-right-click-outline$$
     "&mkp MCLK":
       tap: $$mdi:mouse-scroll-wheel$$
-    # Modifiers
-    "&caps_word": $$mdi:alpha-w-box$$
-    "&kt RSHIFT":
-      tap: $$mdi:apple-keyboard-shift$$
-      hold: $$mdi:toggle-switch$$
-
-    # Empty
-    "&none":
-      tap: $$mdi:minus-circle-outline$$
-      type: none
-
-    # Whitespace
-    "&bkspc_del":
-      type: backspace
-      tap: $$mdi:backspace$$
-      shifted: $$mdi:backspace-reverse-outline$$
-
-    # Bluetooth
+    "&mkp MB4":
+      tap: $$mdi:arrow-left-circle-outline$$
+      shifted: back
+    "&mkp MB5":
+      tap: $$mdi:arrow-right-circle-outline$$
+      shifted: fwd
+    # Bluetooth / output
     "&bt BT_SEL 0":
-      shifted: $$mdi:bluetooth-connect$$
-      tap: ""
+      tap: $$mdi:bluetooth-connect$$
       hold: 1
     "&bt BT_SEL 1":
-      shifted: $$mdi:bluetooth-connect$$
-      tap: ""
+      tap: $$mdi:bluetooth-connect$$
       hold: 2
     "&bt BT_SEL 2":
-      shifted: $$mdi:bluetooth-connect$$
-      tap: ""
+      tap: $$mdi:bluetooth-connect$$
       hold: 3
     "&bt BT_SEL 3":
-      shifted: $$mdi:bluetooth-connect$$
-      tap: ""
+      tap: $$mdi:bluetooth-connect$$
       hold: 4
     "&bt BT_SEL 4":
-      shifted: $$mdi:bluetooth-connect$$
-      tap: ""
+      tap: $$mdi:bluetooth-connect$$
       hold: 5
+    "&bt BT_CLR":
+      tap: $$mdi:bluetooth-off$$
+      hold: clear
     "&out OUT_TOG":
-      shifted: $$mdi:usb$$
-      tap: $$mdi:toggle-switch$$
+      tap: $$mdi:usb$$
       hold: $$mdi:bluetooth$$
-    "&bt BT_PRV":
-      shifted: $$mdi:bluetooth-connect$$
-      tap: ""
-      hold: $$mdi:arrow-up-bold$$
-    "&bt BT_NXT":
-      shifted: $$mdi:bluetooth-connect$$
-      tap: ""
-      hold: $$mdi:arrow-down-bold$$
-    # Reset
-    "&sys_reset":
-      type: bootloader
-      tap: $$mdi:backup-restore$$
+    # System
     "&bootloader":
+      type: bootloader
       tap: $$mdi:progress-download$$
 
   # ZMK
@@ -404,6 +370,8 @@ parse_config:
     LSHFT: $$mdi:apple-keyboard-shift$$
     LCMD: $$mdi:apple-keyboard-command$$
     LG: $$mdi:apple-keyboard-command$$
+    LGUI: $$mdi:apple-keyboard-command$$
+    RGUI: $$mdi:apple-keyboard-command$$
     LEFT_GUI: $$mdi:apple-keyboard-command$$
     LEFT_COMMAND: $$mdi:apple-keyboard-command$$
     RCTRL: $$mdi:apple-keyboard-control$$
@@ -526,37 +494,7 @@ parse_config:
       hold: zoom
 
   zmk_combos:
-    combo_to_2:
+    combo_mouse:
+      align: bottom
+    combo_esc:
       align: top
-    combo_to_3:
-      align: top
-    combo_bt_clear:
-      align: top
-      offset: 0.03
-    combo_mute:
-      align: top
-      offset: 0.15
-    combo_minus:
-      key:
-        shifted: "_"
-        hold: "-"
-    combo_equal:
-      key:
-        shifted: "+"
-        hold: "="
-    combo_backslash:
-      key:
-        shifted: "|"
-        hold: \
-    combo_lbkt:
-      key:
-        shifted: "{"
-        hold: "["
-    combo_rbkt:
-      key:
-        shifted: "}"
-        hold: "]"
-    combo_semicolon:
-      key:
-        shifted: ":"
-        hold: ";"

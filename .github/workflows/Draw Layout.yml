@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "config/**"
-      - .github/workflows/draw.yml
+      - ".github/workflows/Draw Layout.yml"
       - keymap_drawer.config.yaml
 
 jobs:

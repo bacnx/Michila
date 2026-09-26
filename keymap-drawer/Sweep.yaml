@@ -11,16 +11,16 @@ layers:
   - U
   - Y
   - {t: ;, s: ':'}
-  - {t: A, h: LGUI}
-  - {t: R, h: '$$mdi:apple-keyboard-option$$'}
-  - {t: S, h: '$$mdi:apple-keyboard-control$$'}
-  - {t: T, h: '$$mdi:apple-keyboard-shift$$'}
+  - {t: A, s: '$$mdi:apple-keyboard-command$$'}
+  - {t: R, s: '$$mdi:apple-keyboard-option$$'}
+  - {t: S, s: '$$mdi:apple-keyboard-control$$'}
+  - {t: T, s: '$$mdi:apple-keyboard-shift$$'}
   - G
   - M
-  - {t: N, h: '$$mdi:apple-keyboard-shift$$'}
-  - {t: E, h: '$$mdi:apple-keyboard-control$$'}
-  - {t: I, h: '$$mdi:apple-keyboard-option$$'}
-  - {t: O, h: RGUI}
+  - {t: N, s: '$$mdi:apple-keyboard-shift$$'}
+  - {t: E, s: '$$mdi:apple-keyboard-control$$'}
+  - {t: I, s: '$$mdi:apple-keyboard-option$$'}
+  - {t: O, s: '$$mdi:apple-keyboard-command$$'}
   - Z
   - X
   - C
@@ -31,10 +31,10 @@ layers:
   - {t: ',', s: <}
   - {t: ., s: '>'}
   - {t: /, s: '?'}
-  - {t: '$$mdi:backspace$$', h: Num/Sym}
+  - {t: '$$mdi:backspace$$', h: '$$mdi:symbol$$'}
   - $$mdi:keyboard-space$$
   - {t: '$$mdi:keyboard-return$$', type: enter}
-  - {t: '$$mdi:keyboard-tab$$', h: Nav}
+  - {t: '$$mdi:keyboard-tab$$', h: '$$mdi:navigation-variant$$'}
   Num/Sym:
   - '!'
   - '@'
@@ -66,10 +66,10 @@ layers:
   - {t: ;, s: ':'}
   - _
   - '|'
-  - {type: held}
+  - {t: '$$mdi:transfer$$', type: trans}
   - $$mdi:keyboard-space$$
   - {t: '$$mdi:keyboard-return$$', type: enter}
-  - {t: Mouse, h: toggle}
+  - {t: '$$mdi:transfer$$', type: trans}
   Nav:
   - $$mdi:keyboard-esc$$
   - INS
@@ -101,59 +101,59 @@ layers:
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
-  - {t: Mouse, h: toggle}
+  - {t: '$$mdi:transfer$$', type: trans}
   - $$mdi:keyboard-space$$
   - {t: '$$mdi:keyboard-return$$', type: enter}
-  - {type: held}
+  - {t: '$$mdi:transfer$$', type: trans}
   Media:
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
+  - F1
+  - F2
+  - F3
+  - F4
+  - F5
+  - F6
+  - F7
+  - F8
+  - F9
+  - F10
   - $$mdi:volume-off$$
   - $$mdi:volume-low$$
   - $$mdi:volume-high$$
   - $$mdi:brightness-7$$
   - $$mdi:brightness-5$$
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
+  - {t: '$$mdi:bluetooth-connect$$', h: '1'}
+  - {t: '$$mdi:bluetooth-connect$$', h: '2'}
+  - {t: '$$mdi:bluetooth-connect$$', h: '3'}
+  - {t: '$$mdi:bluetooth-connect$$', h: '4'}
+  - {t: '$$mdi:bluetooth-connect$$', h: '5'}
   - $$mdi:skip-previous$$
   - $$mdi:play-pause$$
   - $$mdi:skip-next$$
   - {t: '$$mdi:transfer$$', type: trans}
+  - {t: '$$mdi:progress-download$$', type: bootloader}
+  - {t: '$$mdi:bluetooth-off$$', h: clear}
+  - {t: '$$mdi:usb$$', h: '$$mdi:bluetooth$$'}
+  - F11
+  - F12
+  - {t: '$$mdi:progress-download$$', type: bootloader}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: Colemak-DH, h: toggle}
   Mouse:
-  - $$mdi:pan-left$$
-  - $$mdi:pan-down$$
-  - $$mdi:pan-up$$
-  - $$mdi:pan-right$$
+  - $$mdi:apple-keyboard-command$$
+  - $$mdi:apple-keyboard-option$$
+  - $$mdi:apple-keyboard-control$$
+  - $$mdi:apple-keyboard-shift$$
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
-  - Slow
-  - '&mkp MB4'
-  - Fast
+  - {t: '$$mdi:speedometer-slow$$', h: slow}
+  - {t: '$$mdi:arrow-left-circle-outline$$', s: back}
+  - {t: '$$mdi:speedometer$$', h: fast}
   - $$mdi:mouse-left-click-outline$$
   - $$mdi:mouse-right-click-outline$$
   - {t: '$$mdi:transfer$$', type: trans}
@@ -165,16 +165,16 @@ layers:
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - $$mdi:mouse-scroll-wheel$$
-  - '&mkp MB5'
+  - {t: '$$mdi:arrow-right-circle-outline$$', s: fwd}
   - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:transfer$$', type: trans}
-  - {t: Colemak-DH, h: toggle}
-  - {t: Colemak-DH, h: toggle}
-  - {t: Colemak-DH, h: toggle}
-  - {t: Colemak-DH, h: toggle}
+  - {t: '$$mdi:pan-left$$', s: '$$mdi:mouse-scroll-wheel$$'}
+  - {t: '$$mdi:pan-down$$', s: '$$mdi:mouse-scroll-wheel$$'}
+  - {t: '$$mdi:pan-up$$', s: '$$mdi:mouse-scroll-wheel$$'}
+  - {t: '$$mdi:pan-right$$', s: '$$mdi:mouse-scroll-wheel$$'}
+  - $$mdi:exit-to-app$$
+  - $$mdi:exit-to-app$$
+  - $$mdi:exit-to-app$$
+  - $$mdi:exit-to-app$$
   Slow:
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
@@ -186,16 +186,16 @@ layers:
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
-  - {type: held}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:menu-left$$', s: '$$mdi:mouse$$'}
-  - {t: '$$mdi:menu-down$$', s: '$$mdi:mouse$$'}
-  - {t: '$$mdi:menu-up$$', s: '$$mdi:mouse$$'}
-  - {t: '$$mdi:menu-right$$', s: '$$mdi:mouse$$'}
+  - {t: '$$mdi:transfer$$', type: trans}
+  - {t: '$$mdi:transfer$$', type: trans}
+  - {t: '$$mdi:transfer$$', type: trans}
+  - {t: '$$mdi:transfer$$', type: trans}
+  - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
@@ -223,14 +223,14 @@ layers:
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
-  - {type: held}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
-  - {t: '$$mdi:menu-left$$', s: '$$mdi:mouse$$'}
-  - {t: '$$mdi:menu-down$$', s: '$$mdi:mouse$$'}
-  - {t: '$$mdi:menu-up$$', s: '$$mdi:mouse$$'}
-  - {t: '$$mdi:menu-right$$', s: '$$mdi:mouse$$'}
+  - {t: '$$mdi:transfer$$', type: trans}
+  - {t: '$$mdi:transfer$$', type: trans}
+  - {t: '$$mdi:transfer$$', type: trans}
+  - {t: '$$mdi:transfer$$', type: trans}
+  - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
@@ -247,6 +247,10 @@ layers:
   - {t: '$$mdi:transfer$$', type: trans}
 combos:
 - p: [31, 32]
-  k: {t: Media, h: toggle}
+  k: {t: Mouse, h: toggle}
+  l: [Colemak-DH, Mouse]
+  a: bottom
 - p: [16, 17]
   k: $$mdi:keyboard-esc$$
+  l: [Colemak-DH]
+  a: top

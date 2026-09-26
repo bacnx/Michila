@@ -156,8 +156,17 @@ parse_config:
       tap: $$mdi:speedometer-slow$$
       hold: slow
     "&mo 6":
-      tap: $$mdi:speedometer$$
+      tap: $$mdi:arrow-left-right-bold$$
       hold: fast
+    "&mo 7":
+      tap: $$mdi:arrow-up-down-bold$$
+      hold: fast
+    "&mo 8":
+      tap: $$mdi:arrow-left-right$$
+      hold: slow
+    "&mo 9":
+      tap: $$mdi:arrow-up-down$$
+      hold: slow
     "&msc SCRL_UP":
       tap: $$mdi:pan-up$$
       shifted: $$mdi:mouse-scroll-wheel$$

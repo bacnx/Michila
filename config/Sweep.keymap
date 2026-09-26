@@ -31,34 +31,76 @@
 #define NAV   2
 #define MEDIA 3
 #define MOUSE 4
-#define SLOW  5
-#define FAST  6
+#define SLOW  5   // A: both axes slow
+#define XFAST 6   // R: horizontal fast
+#define YFAST 7   // S: vertical fast
+#define XSLOW 8   // X: horizontal slow
+#define YSLOW 9   // C: vertical slow
 
-// ─── Mouse speed (multiplier = num den → MOVE_VAL * num / den) ──────
-// X = horizontal, Y = vertical. Tune each independently.
+// ─── Mouse speed (multiplier = num den) ─────────────────────────────
+// Normal speed is MOVE_VAL * NORMAL. Each held speed key multiplies on top,
+// and they stack: S + X = vertical fast, horizontal slow.
 #define MMV_X_NORMAL 2 1   // 2400
 #define MMV_Y_NORMAL 3 2   // 1800
-#define MMV_X_SLOW   1 3   //  400
-#define MMV_Y_SLOW   1 4   //  300
-#define MMV_X_FAST   4 1   // 4800
-#define MMV_Y_FAST   3 1   // 3600
+#define SPEED_SLOW   1 6   // A      → 400 / 300
+#define SPEED_FAST   2 1   // R / S  → 4800 / 3600
+#define SPEED_SLOWER 1 4   // X / C  → 600 / 450
 
-// Scroll speed (both wheel axes)
+// Scroll: same keys, applied to the matching wheel axis
 #define SCRL_NORMAL  1 1
-#define SCRL_SLOW    1 3
-#define SCRL_FAST    2 1
+#define SCRL_SLOW    1 3   // A
 
+/ {
+    // Per-axis scroll scalers (ZMK only ships one for both wheel axes)
+    zip_hwheel_scaler: zip_hwheel_scaler {
+        compatible = "zmk,input-processor-scaler";
+        #input-processor-cells = <2>;
+        type = <INPUT_EV_REL>;
+        codes = <INPUT_REL_HWHEEL>;
+        track-remainders;
+    };
+
+    zip_wheel_scaler: zip_wheel_scaler {
+        compatible = "zmk,input-processor-scaler";
+        #input-processor-cells = <2>;
+        type = <INPUT_EV_REL>;
+        codes = <INPUT_REL_WHEEL>;
+        track-remainders;
+    };
+};
+
+// Overrides use process-next so every matching one applies, then the base.
 &mmv_input_listener {
     input-processors = <&zip_x_scaler MMV_X_NORMAL>, <&zip_y_scaler MMV_Y_NORMAL>;
 
     slow {
         layers = <SLOW>;
-        input-processors = <&zip_x_scaler MMV_X_SLOW>, <&zip_y_scaler MMV_Y_SLOW>;
+        input-processors = <&zip_xy_scaler SPEED_SLOW>;
+        process-next;
     };
 
-    fast {
-        layers = <FAST>;
-        input-processors = <&zip_x_scaler MMV_X_FAST>, <&zip_y_scaler MMV_Y_FAST>;
+    x_fast {
+        layers = <XFAST>;
+        input-processors = <&zip_x_scaler SPEED_FAST>;
+        process-next;
+    };
+
+    y_fast {
+        layers = <YFAST>;
+        input-processors = <&zip_y_scaler SPEED_FAST>;
+        process-next;
+    };
+
+    x_slow {
+        layers = <XSLOW>;
+        input-processors = <&zip_x_scaler SPEED_SLOWER>;
+        process-next;
+    };
+
+    y_slow {
+        layers = <YSLOW>;
+        input-processors = <&zip_y_scaler SPEED_SLOWER>;
+        process-next;
     };
 };
 
@@ -68,11 +110,31 @@
     slow {
         layers = <SLOW>;
         input-processors = <&zip_scroll_scaler SCRL_SLOW>;
+        process-next;
     };
 
-    fast {
-        layers = <FAST>;
-        input-processors = <&zip_scroll_scaler SCRL_FAST>;
+    x_fast {
+        layers = <XFAST>;
+        input-processors = <&zip_hwheel_scaler SPEED_FAST>;
+        process-next;
+    };
+
+    y_fast {
+        layers = <YFAST>;
+        input-processors = <&zip_wheel_scaler SPEED_FAST>;
+        process-next;
+    };
+
+    x_slow {
+        layers = <XSLOW>;
+        input-processors = <&zip_hwheel_scaler SPEED_SLOWER>;
+        process-next;
+    };
+
+    y_slow {
+        layers = <YSLOW>;
+        input-processors = <&zip_wheel_scaler SPEED_SLOWER>;
+        process-next;
     };
 };
 
@@ -215,22 +277,24 @@
         // Toggle: tap both inner thumbs. Exit: tap both inner thumbs, or any thumb.
         // Right home   — N/E/I/O = move LEFT/DOWN/UP/RIGHT
         // Right bottom — H/,/./⁄ = scroll LEFT/DOWN/UP/RIGHT (same fingers, one row down)
-        // Left top     — Q/W/F/P = GUI/ALT/CTRL/SHIFT (for ctrl-click, shift-click…)
-        // Left home    — A=hold slow   R=MB4(back)   S=hold fast   T=LCLK   G=RCLK
-        // Left bottom  — D=MCLK        V=MB5(fwd)
+        // Left top     — Q/W/F/P = GUI/ALT/CTRL/SHIFT (for ctrl-click, shift-click…)   B=MB4(back)
+        // Left home    — A=slow (both axes)   R=horizontal fast   S=vertical fast   T=LCLK   G=RCLK
+        // Left bottom  —                      X=horizontal slow   C=vertical slow   D=MCLK   V=MB5(fwd)
+        // Speed keys are held and stack (e.g. S + X = vertical fast, horizontal slow).
         mouse_layer {
             display-name = "Mouse";
             bindings = <
-&kp LGUI        &kp LALT        &kp LCTRL       &kp LSHFT       &trans          &trans  &trans           &trans           &trans           &trans
-&mo SLOW        &mkp MB4        &mo FAST        &mkp LCLK       &mkp RCLK       &trans  &mmv MOVE_LEFT   &mmv MOVE_DOWN   &mmv MOVE_UP     &mmv MOVE_RIGHT
-&trans          &trans          &trans          &mkp MCLK       &mkp MB5        &trans  &msc SCRL_LEFT   &msc SCRL_DOWN   &msc SCRL_UP     &msc SCRL_RIGHT
+&kp LGUI        &kp LALT        &kp LCTRL       &kp LSHFT       &mkp MB4        &trans  &trans           &trans           &trans           &trans
+&mo SLOW        &mo XFAST       &mo YFAST       &mkp LCLK       &mkp RCLK       &trans  &mmv MOVE_LEFT   &mmv MOVE_DOWN   &mmv MOVE_UP     &mmv MOVE_RIGHT
+&trans          &mo XSLOW       &mo YSLOW       &mkp MCLK       &mkp MB5        &trans  &msc SCRL_LEFT   &msc SCRL_DOWN   &msc SCRL_UP     &msc SCRL_RIGHT
                                                 &to BASE        &to BASE        &to BASE  &to BASE
             >;
         };
 
-        // ─── Layer 5: Slow mouse ────────────────────────────────────
-        // Held from mouse layer (A). Speed comes from the input listener
-        // override above, so every key falls through to the mouse layer.
+        // Layers 5-9 only switch mouse speed (see the input listener
+        // overrides above); every key falls through to the mouse layer.
+
+        // ─── Layer 5: Slow, both axes (A) ─────────────────────────────
         slow_mouse {
             display-name = "Slow";
             bindings = <
@@ -241,10 +305,42 @@
             >;
         };
 
-        // ─── Layer 6: Fast mouse ────────────────────────────────────
-        // Held from mouse layer (S). See Layer 5.
-        fast_mouse {
-            display-name = "Fast";
+        // ─── Layer 6: Horizontal fast (R) ─────────────────────────────
+        x_fast_mouse {
+            display-name = "H-Fast";
+            bindings = <
+&trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+                        &trans  &trans    &trans  &trans
+            >;
+        };
+
+        // ─── Layer 7: Vertical fast (S) ─────────────────────────────
+        y_fast_mouse {
+            display-name = "V-Fast";
+            bindings = <
+&trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+                        &trans  &trans    &trans  &trans
+            >;
+        };
+
+        // ─── Layer 8: Horizontal slow (X) ─────────────────────────────
+        x_slow_mouse {
+            display-name = "H-Slow";
+            bindings = <
+&trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+                        &trans  &trans    &trans  &trans
+            >;
+        };
+
+        // ─── Layer 9: Vertical slow (C) ─────────────────────────────
+        y_slow_mouse {
+            display-name = "V-Slow";
             bindings = <
 &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans

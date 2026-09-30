@@ -127,28 +127,28 @@ parse_config:
     "&to 0":
       tap: $$mdi:exit-to-app$$
     # Home row mods
-    "&hml LGUI A":
+    "&hm LGUI A":
       tap: 'A'
       shifted: $$mdi:apple-keyboard-command$$
-    "&hml LALT R":
+    "&hm LALT R":
       tap: 'R'
       shifted: $$mdi:apple-keyboard-option$$
-    "&hml LCTRL S":
+    "&hm LCTRL S":
       tap: 'S'
       shifted: $$mdi:apple-keyboard-control$$
-    "&hml LSHFT T":
+    "&hm LSHFT T":
       tap: 'T'
       shifted: $$mdi:apple-keyboard-shift$$
-    "&hmr RSHFT N":
+    "&hm RSHFT N":
       tap: 'N'
       shifted: $$mdi:apple-keyboard-shift$$
-    "&hmr RCTRL E":
+    "&hm RCTRL E":
       tap: 'E'
       shifted: $$mdi:apple-keyboard-control$$
-    "&hmr RALT I":
+    "&hm RALT I":
       tap: 'I'
       shifted: $$mdi:apple-keyboard-option$$
-    "&hmr RGUI O":
+    "&hm RGUI O":
       tap: 'O'
       shifted: $$mdi:apple-keyboard-command$$
     # Mouse
